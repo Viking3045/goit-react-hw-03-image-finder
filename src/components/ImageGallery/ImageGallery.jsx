@@ -1,6 +1,6 @@
 import React from 'react';
 import Loader from 'components/Loader/Loader';
-// import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
+import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
 
 class ImageGallery extends React.Component {
@@ -58,11 +58,7 @@ class ImageGallery extends React.Component {
 
     if (status === 'resolved') {
       return <ul className={css.gallery}>
-          {img.hits.map(({ previewURL, id, tag }) => (
-              <li key={id}>
-                <img src={previewURL} width="300" height="300" alt={tag} />
-              </li>
-            ))}
+          <ImageGalleryItem  picture={img.hits}  />
         </ul>
     }
     // return (
