@@ -1,22 +1,18 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import css from './ImageGalleryItem.module.css';
 
-class ImageGalleryItem extends React.Component {
-  render() {
-    return (this.props.picture.map(({ id, tag, previewURL }) => (
-      <li key={id} id={id} className={css.galleryItem}>
-        <img src={previewURL}  width="300" height="300" alt={tag} />
+export default function ImageGalleryItem({ url, tags, onClick }) {
+  return (
+    <>
+      <li className={css.item}>
+        <img src={url} alt={tags} onClick={() => onClick(url)} />
       </li>
-    )
-       
-    )
-      
-     
-    );
-  }
+    </>
+  );
 }
-ImageGalleryItem.defaultProps = {
-  picture: [],
-};
 
-export default ImageGalleryItem;
+ImageGalleryItem.propTypes = {
+  url: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};

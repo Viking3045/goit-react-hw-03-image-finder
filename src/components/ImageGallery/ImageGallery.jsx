@@ -1,38 +1,50 @@
 import React from 'react';
 import Loader from 'components/Loader/Loader';
+import getImages from '../../Api/api'
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
+import Button from 'components/Button/Button';
 
 class ImageGallery extends React.Component {
   state = {
-    img: null,
-    error: null,
+    img: [],
     status:'idle',
   };
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.name !== this.props.name) {
-      //   console.log('1prevProps:', prevProps.name);
-      //   console.log('2pokemonInfo:', this.props.name);
-      //   console.log('щось змінилось');
-      this.setState({ status:'pending'});
-      setTimeout(() => {
-        fetch(
-          `https://pixabay.com/api/?q=${this.props.name}&page=1&key=34850803-a728da3cec220ddd15679bd1c&image_type=photo&orientation=horizontal&per_page=12`
-        )
-          .then(responce => {
-            if (responce.ok) {
-              return responce.json()
-            }
-            return Promise.reject(new Error('Всепропало2222'))
-          })
-          .then(img => this.setState({ img, status:'resolved' }))
-          .catch(error => this.setState({ error, status:'rejected' }))
-          // .finally(() => this.setState({ loading: false }));
-      }, 1000);
+    if (prevProps.inputValue !== this.props.inputValue) {
+        this.fetchLoad();
+    }
+     if (prevProps.page !== this.props.page && this.props.page > 1) {
+      this.fetchLoadMore();
     }
   }
+  fetchLoad = () => {
+    const { inputValue, page } = this.props;
+
+    getImages(inputValue, page)
+      .then(response => {
+        this.setState({
+          images: response.hits,
+          status: 'resolve',
+        });
+      })
+      .catch(error => this.setState({ status: 'rejected' }));
+  };
+
+  fetchLoadMore = () => {
+    const { inputValue, page } = this.props;
+
+    getImages(inputValue, page)
+      .then(response => {
+        this.setState(prevState => ({
+          images: [...prevState.images, ...response.hits],
+          status: 'resolve',
+        }));
+      })
+      .catch(error => this.setState({ status: 'rejected' }));
+  };
   render() {
-    const { img, error, status } = this.state;
+    const { img, status } = this.state;
     // img && console.log(img.hits)
     // const { name } = this.props;
     //     img && img.hits.map(({ previewURL, id }) => (
@@ -40,26 +52,43 @@ class ImageGallery extends React.Component {
     // )
     // )
 
-    if (status === 'idle') {
-      return <div>Введіть назву картинки</div>
-    }
+    // if (status === 'idle') {
+    //   return <div>Введіть назву картинки</div>
+    // }
 
     if (status === 'pending') {
       return <Loader />
     }
 
-    if (status === 'rejected') {
-      return <h2>{error.message}</h2>
-    }
+    // if (status === 'rejected') {
+    //   return <h2>{error.message}</h2>
+    // }
 
-    if (img.hits.length=== 0) {
-      return <h1>Вибачте, картинка {this.props.name}відсутня в нашому сервісі</h1>
-    }
+    // if (img.hits.length=== 0) {
+    //   return <h1>Вибачте, картинка {this.props.name}відсутня в нашому сервісі</h1>
+    // }
 
     if (status === 'resolved') {
-      return <ul className={css.gallery}>
-          <ImageGalleryItem  picture={img.hits}  />
-        </ul>
+      return (   <>
+        <ul className={css.gallery}>
+     
+         {img.map(({ id, largeImageURL, tags }) => (
+              <ImageGalleryItem
+                key={id}
+                url={largeImageURL}
+                tags={tags}
+                onClick={this.props.onClick}
+              />
+            ))}  
+      </ul>
+             {this.state.images.length !== 0 ? (
+            <Button onClick={this.props.loadMoreBtn} />
+          ) : (
+            alert('No results')
+      )
+      }
+      </>
+      );
     }
     // return (
     //   <div>

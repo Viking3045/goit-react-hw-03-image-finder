@@ -5,20 +5,16 @@ import css from './Searchbar.module.css'
 
 class Searchbar extends React.Component{
   state = {
-  name: ''
+  input: ''
   }
-  handleNameChange = event => {
-    this.setState({ name: event.currentTarget.value.toLowerCase()})
+  handleInputChange = event => {
+    this.setState({ input: event.target.value.toLowerCase()})
   }
   
   handleSubmit = event => {
-    event.preventDefault();
-    if (this.state.name.trim() === '') {
-      alert('Введіть назву картинки')
-      return;
-    }
-    this.props.onSubmit(this.state.name)
-    this.setState({name:''})
+     event.preventDefault();
+    this.props.getInputValue(this.state.input);
+    this.setState({ input: '' });
   }
 
     render() {
@@ -32,8 +28,8 @@ class Searchbar extends React.Component{
     <input
                 className={css.input}
                 type="text"
-                value={this.state.name}
-                onChange={this.handleNameChange}
+                value={this.state.input}
+                onChange={this.handleInputChange}
       // autocomplete="off"
       // autofocus
       placeholder="Search images and photos"

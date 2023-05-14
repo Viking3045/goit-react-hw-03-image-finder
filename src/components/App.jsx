@@ -3,22 +3,45 @@ import React from 'react';
 // import css from './Searchbar/Searchbar.module.css'
 import Searchbar from "./Searchbar/Searchbar";
 import ImageGallery from "./ImageGallery/ImageGallery";
+import Modal from "./Modal/Modal";
 
 export class App extends React.Component {
-state={name:''}
+  state = {
+   inputValue: '',
+    modalImg: '',
+    showModal: false,
+    page: 1,
+}
 
 
-  handleFormSubmit = name => {
-    this.setState({ name })
+  getInputValue = handleValue => {
+    this.setState({ inputValue: handleValue, page: 1 })
   }
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }))
+  }
+
+  getLargeImg = url => {
+    this.toggleModal();
+    this.setState({ modalImg: url });
+  }
+
+  loadMoreBtn = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
+
   render() {
+     const { modalImg, showModal ,page} = this.state;
     return (
-      <div>
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery name={this.state.name} />
-        {/* <ToastContainer autoClose={5000}/> */}
-     </div>
-   )
+      <>
+        <Searchbar getInputValue={this.getInputValue}/>
+        <ImageGallery inputValue={this.state.inputValue} onClick={this.getLargeImg} loadMoreBtn={this.loadMoreBtn} page={ page}/>
+        {showModal && <Modal url={modalImg} onClose={this.toggleModal} />}
+      </>
+    )
  }
 };
 
