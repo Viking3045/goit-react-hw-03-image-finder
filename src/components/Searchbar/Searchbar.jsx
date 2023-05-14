@@ -7,6 +7,10 @@ export default class Searchbar extends Component {
   };
 
   search = e => {
+     if (this.state.input.trim() === '') {
+      alert('Please enter something');
+      return;
+    }
     e.preventDefault();
     this.props.getInputValue(this.state.input);
     this.setState({ input: '' });
