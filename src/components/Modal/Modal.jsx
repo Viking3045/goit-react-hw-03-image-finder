@@ -1,8 +1,12 @@
 import { Component } from 'react';
-import css from './Modal.module.css';
+import PropTypes from 'prop-types';
+import s from './Modal.module.css';
 
 export default class Modal extends Component {
-   
+    static propTypes = {
+        url: PropTypes.string.isRequired,
+        onClose: PropTypes.func.isRequired,
+    };
 
     state = {}
 
@@ -28,8 +32,8 @@ export default class Modal extends Component {
 
     render() {
         return (
-            <div className={css.overlay} onClick={this.clickBackdrop}>
-                <div className={css.modal}>
+            <div className={s.overlay} onClick={this.clickBackdrop}>
+                <div className={s.modal}>
                     <img src={this.props.url} alt="" />
                 </div>
             </div>

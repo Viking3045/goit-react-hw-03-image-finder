@@ -1,20 +1,18 @@
-import React from 'react';
-import { Audio } from 'react-loader-spinner';
-class Loader extends React.Component{
-  render() {
-    return (
-        <Audio
-  height="80"
-  width="80"
-  radius="9"
-  color="green"
-  ariaLabel="loading"
-  // wrapperStyle
-  // wrapperClass
-/> 
-    )
-  }
-}
- 
+import { Oval } from 'react-loader-spinner';
+import s from './Loader.module.css';
 
-export default Loader
+export default function Loader() {
+  return (
+    <div className={s.loader}>
+      <Oval
+        ariaLabel="loading-indicator"
+        height={100}
+        width={100}
+        strokeWidth={5}
+        strokeWidthSecondary={1}
+        color="blue"
+        secondaryColor="white"
+      />
+    </div>
+  );
+}

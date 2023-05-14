@@ -1,23 +1,31 @@
-import React from 'react';
-import Loader from 'components/Loader/Loader';
-import getImages from '../../Api/api'
-import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import css from './ImageGallery.module.css';
-import Button from 'components/Button/Button';
+import getImages from '../../Api/api';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import Loader from '../Loader/Loader';
+import Button from '../Button/Button';
 
-class ImageGallery extends React.Component {
-  state = {
-    img: [],
-    status:'idle',
+export default class ImageGallery extends Component {
+  static propTypes = {
+    onClick: PropTypes.func.isRequired,
+    inputValue: PropTypes.string.isRequired,
   };
+
+  state = {
+    images: [],
+    status: 'idle',
+  };
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.inputValue !== this.props.inputValue) {
-        this.fetchLoad();
+      this.fetchLoad();
     }
-     if (prevProps.page !== this.props.page && this.props.page > 1) {
+    if (prevProps.page !== this.props.page && this.props.page > 1) {
       this.fetchLoadMore();
     }
   }
+
   fetchLoad = () => {
     const { inputValue, page } = this.props;
 
@@ -43,75 +51,34 @@ class ImageGallery extends React.Component {
       })
       .catch(error => this.setState({ status: 'rejected' }));
   };
-  render() {
-    const { img, status } = this.state;
-    // img && console.log(img.hits)
-    // const { name } = this.props;
-    //     img && img.hits.map(({ previewURL, id }) => (
-    // console.log(previewURL)
-    // )
-    // )
 
-    // if (status === 'idle') {
-    //   return <div>Введіть назву картинки</div>
-    // }
+  render() {
+    const { images, status } = this.state;
 
     if (status === 'pending') {
-      return <Loader />
+      return <Loader />;
     }
 
-    // if (status === 'rejected') {
-    //   return <h2>{error.message}</h2>
-    // }
-
-    // if (img.hits.length=== 0) {
-    //   return <h1>Вибачте, картинка {this.props.name}відсутня в нашому сервісі</h1>
-    // }
-
-    if (status === 'resolved') {
-      return (   <>
-        <ul className={css.gallery}>
-     
-         {img.map(({ id, largeImageURL, tags }) => (
+    if (status === 'resolve') {
+      return (
+        <>
+          <ul className={css.gallery}>
+            {images.map(({ id, largeImageURL, tags }) => (
               <ImageGalleryItem
                 key={id}
                 url={largeImageURL}
                 tags={tags}
                 onClick={this.props.onClick}
               />
-            ))}  
-      </ul>
-             {this.state.images.length !== 0 ? (
+            ))}
+          </ul>
+          {this.state.images.length !== 0 ? (
             <Button onClick={this.props.loadMoreBtn} />
           ) : (
             alert('No results')
-      )
-      }
-      </>
+          )}
+        </>
       );
     }
-    // return (
-    //   <div>
-    //     {/* {error && <h2>{error.message}</h2>} */}
-
-    //     {/* {loading && <Loader />} */}
-    //     {/* {!name && <div>Введіть назву картинки</div>} */}
-    //     <ul className={css.gallery}>
-    //       {/* {img && <li>
-    //         <img src={img.hits.imageURL} width='300' alt="" />
-    //               </li>
-    //       } */}
-
-    //       {img &&
-    //         img.hits.map(({ previewURL, id, tag }) => (
-    //           <li key={id}>
-    //             <img src={previewURL} width="300" height="300" alt={tag} />
-    //           </li>
-    //         ))}
-    //     </ul>
-    //   </div>
-    // );
   }
 }
-
-export default ImageGallery;
